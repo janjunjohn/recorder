@@ -5,8 +5,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from ..settings.database import Base, SQLALCHEMY_DATABASE_URL
-from ..models.user import User
+from databases.settings.database import SQLALCHEMY_DATABASE_URL, Base # 追記
+from databases.models.user import User # 追記
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
