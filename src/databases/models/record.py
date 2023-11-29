@@ -1,18 +1,13 @@
 import datetime
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
-from sqlalchemy.orm import relationship
 from databases.settings.database import Base
-from task import Task
 
-class User(Base):
-    __tablename__ = "users"
+class Record(Base):
+    __tablename__ = 'records'
 
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    username = Column(String, index=True)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
+    started_time = Column(DateTime)
+    stopped_time = Column(DateTime)
+    is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.datetime.now)
     updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
-    
-    tasks = relationship('Task')
