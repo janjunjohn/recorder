@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-import user_routers
-import task_routers
-import record_routers
+from routers import user_routers
+from routers import  task_routers
+from routers import  record_routers
 
 
 router = APIRouter()
