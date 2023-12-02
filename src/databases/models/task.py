@@ -1,13 +1,18 @@
+import uuid
 import datetime
+
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+
 from databases.settings.database import Base
-from record import Record
+from databases.models.record import Record
+
 
 class Task(Base):
     __tablename__ = 'tasks'
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     task_name = Column(String, unique=True, index=True)
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.datetime.now)
