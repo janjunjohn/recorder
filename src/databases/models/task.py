@@ -1,22 +1,23 @@
 import uuid
 import datetime
 
-from sqlalchemy import Column, String, Boolean, DateTime
+from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from databases.settings.database import Base
 
 
-class User(Base):
-    __tablename__ = "users"
+class Task(Base):
+    __tablename__ = 'tasks'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    email = Column(String, unique=True, index=True)
-    username = Column(String)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
+    task_name = Column(String, index=True)
+    is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.datetime.now)
     updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
-    tasks = relationship('Task', back_populates='user')
+    records = relationship('Record', back_populates='task')
+    user = relationship('User', back_populates='tasks')
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'))
+ 
