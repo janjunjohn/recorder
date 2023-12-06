@@ -1,15 +1,41 @@
-from pydantic import BaseModel
+import uuid
+from pydantic import BaseModel, field_validator
 from typing import Optional
 
+
 class UserBase(BaseModel):
-    name: str
+    username: str
     email: str
+
+    @field_validator('username')
+    def username_is_valid(cls, username):
+        if len(username) < 3:
+            raise ValueError('ユーザー名は3文字以上にしてください。')
+        if len(username) > 20:
+            raise ValueError('ユーザー名は50文字以下にしてください。')
+        return username
+
+    @field_validator('email')
+    def email_is_valid(cls, email):
+        if '@' not in email:
+            raise ValueError('メールアドレスの形式が正しくありません。')
+        return email
+
 
 class UserCreate(UserBase):
     password: str
 
-class UserSchema(UserBase):
-    id: int
+    @field_validator('password')
+    def password_is_valid(cls, password):
+        if len(password) < 8:
+            raise ValueError('パスワードは8文字以上にしてください。')
+        if len(password) > 20:
+            raise ValueError('パスワードは20文字以下にしてください。')
+        return password
+
+
+class User(UserBase):
+    id: str | uuid.UUID
     hashed_password: str
 
     class Config:
