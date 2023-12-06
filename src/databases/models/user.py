@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from databases.settings.database import Base
-
+from databases.models.task import Task
 
 class User(Base):
     __tablename__ = "users"
@@ -19,4 +19,4 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.datetime.now)
     updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
-    tasks = relationship('Task', back_populates='user')
+    tasks = relationship('Task', backref='user')
