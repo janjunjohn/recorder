@@ -17,6 +17,6 @@ def signup(user: UserCreate, db: Session = Depends(get_db)) -> User:
         return create_user(db, user)
     except UserAlreadyExistsError as e:
         print(e)
-        return HTTPException(status_code=400, detail=e.args[0])
+        raise HTTPException(status_code=400, detail=e.args[0])
     except Exception as e:
-        return HTTPException(status_code=500, detail=e)
+        raise HTTPException(status_code=500, detail=e)
