@@ -19,4 +19,4 @@ def signup(user: UserCreate, db: Session = Depends(get_db)) -> User:
         print(e)
         return HTTPException(status_code=400, detail=e.args[0])
     except Exception as e:
-        raise HTTPException(status_code=500, detail=e)
+        return HTTPException(status_code=500, detail=e)
