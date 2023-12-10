@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from databases.models.user import User as UserTable
 from schemas.user_schema import User
-from services.common.hash import HashService
 
 
 def get_user(db: Session, user_id: str) -> User:
@@ -10,6 +9,7 @@ def get_user(db: Session, user_id: str) -> User:
 
 def get_user_by_email(db: Session, email: str) -> User:
     return db.query(UserTable).filter(UserTable.email == email).first()
+
 
 def create_user(db: Session, user: User) -> User:
     db_user = UserTable(id=user.id, email=user.email, username=user.username,
