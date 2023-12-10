@@ -4,8 +4,8 @@ from typing import List
 
 from databases.settings.database import get_db
 from schemas.user_schema import UserCreate, User
-from services.common.errors import UserAlreadyExistsError
-from services.user_service import create_user
+from services.common.errors import UserAlreadyExistsError, UserNotFoundError
+from services import user_service
 
 
 router = APIRouter(prefix='/users', tags=['users'])
@@ -14,9 +14,18 @@ router = APIRouter(prefix='/users', tags=['users'])
 @router.post("/")
 def signup(user: UserCreate, db: Session = Depends(get_db)) -> User:
     try:
-        return create_user(db, user)
+        return user_service.create_user(db, user)
     except UserAlreadyExistsError as e:
-        print(e)
         raise HTTPException(status_code=400, detail=e.args[0])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=e)
+
+
+@router.delete("/{user_id}")
+def delete_user(user_id: str, db: Session = Depends(get_db)) -> None:
+    try:
+        return user_service.delete_user(db, user_id)
+    except UserNotFoundError as e:
+        raise HTTPException(status_code=404, detail=e.args[0])
     except Exception as e:
         raise HTTPException(status_code=500, detail=e)

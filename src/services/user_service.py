@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy.orm import Session
 from databases.cruds import crud
 from schemas.user_schema import User, UserCreate
-from services.common.errors import UserAlreadyExistsError
+from services.common.errors import UserAlreadyExistsError, UserNotFoundError
 from services.common.hash import HashService
 
 
@@ -28,3 +28,11 @@ def create_user(db: Session, user: UserCreate) -> User:
     )
 
     return crud.create_user(db, user)
+
+
+def delete_user(db: Session, user_id: str) -> None:
+    exists_user: bool = crud.exists_user_by_id(db, user_id)
+    if not exists_user:
+        raise UserNotFoundError("ユーザーが見つかりませんでした")
+
+    return crud.delete_user(db, user_id)

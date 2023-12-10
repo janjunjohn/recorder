@@ -1,7 +1,10 @@
 from sqlalchemy.orm import Session
 from databases.models.user import User as UserTable
 from schemas.user_schema import User
-from services.common.hash import HashService
+
+
+def get_user(db: Session, user_id: str) -> User:
+    return db.query(UserTable).filter(UserTable.id == user_id).first()
 
 
 def get_user_by_email(db: Session, email: str) -> User:
@@ -12,9 +15,21 @@ def get_user_by_email(db: Session, email: str) -> User:
     return User(id=db_user.id, email=db_user.email, username=db_user.username, hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
 
 
+def exists_user_by_id(db: Session, user_id: str) -> bool:
+    query = db.query(UserTable).filter(UserTable.id == user_id)
+    return db.query(query.exists()).scalar()
+
+
 def exists_user_by_email(db: Session, email: str) -> bool:
     query = db.query(UserTable).filter(UserTable.email == email)
     return db.query(query.exists()).scalar()
+
+
+def delete_user(db: Session, user_id: str) -> None:
+    db_user = db.query(UserTable).filter(UserTable.id == user_id).first()
+    db_user.is_active = False
+    db.commit()
+    db.refresh(db_user)
 
 
 def create_user(db: Session, user: User) -> User:
