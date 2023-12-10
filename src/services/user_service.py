@@ -31,7 +31,7 @@ def create_user(db: Session, user: UserCreate) -> User:
 
 
 def delete_user(db: Session, user_id: str) -> None:
-    exists_user: bool = crud.exists_user_by_id(db, user_id)
+    exists_user: bool = crud.exists_active_user_by_id(db, user_id)
     if not exists_user:
         raise UserNotFoundError("ユーザーが見つかりませんでした")
 
