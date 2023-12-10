@@ -1,4 +1,5 @@
 import uuid
+import datetime
 from pydantic import BaseModel, field_validator
 from typing import Optional
 
@@ -37,6 +38,9 @@ class UserCreate(UserBase):
 class User(UserBase):
     id: str | uuid.UUID
     hashed_password: str
+    is_active: bool
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
 
     class Config:
         orm_mode = True
