@@ -14,9 +14,6 @@ def get_user_by_email(db: Session, email: str) -> User:
 
 def get_user_by_id(db: Session, user_id: str) -> User:
     user: Optional[User] = crud.get_user_by_id(db, user_id)
-
-    if user is None:
-        raise UserNotFoundError("ユーザーが見つかりませんでした")
     return user
 
 

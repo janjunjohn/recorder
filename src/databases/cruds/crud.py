@@ -1,19 +1,27 @@
 from typing import Optional
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import NoResultFound
 from databases.models.user import User as UserTable
 from schemas.user_schema import User
+from services.common.errors import UserNotFoundError
 
 
-def get_user_by_id(db: Session, user_id: str) -> Optional[User]:
-    user: Optional[User] = db.query(UserTable).filter(UserTable.id == user_id).one()
-    return User(id=user.id, email=user.email, username=user.username, hashed_password=user.hashed_password, is_active=user.is_active, created_at=user.created_at, updated_at=user.updated_at)
+def get_user_by_id(db: Session, user_id: str) -> User:
+    try:
+        db_user: User = db.query(UserTable).filter(UserTable.id == user_id).one()
+        return User(id=db_user.id, email=db_user.email, username=db_user.username, hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
+    except NoResultFound as e:
+        raise UserNotFoundError("ユーザーが見つかりませんでした")
+
 
 
 def get_user_by_email(db: Session, email: str) -> User:
-    db_user: UserTable = db.query(UserTable).filter(
-        UserTable.email == email).one()
-    return User(id=db_user.id, email=db_user.email, username=db_user.username, hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
-
+    try:
+        db_user: UserTable = db.query(UserTable).filter(
+            UserTable.email == email).one()
+        return User(id=db_user.id, email=db_user.email, username=db_user.username, hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
+    except NoResultFound as e:
+        raise UserNotFoundError("ユーザーが見つかりませんでした")
 
 def exists_active_user_by_id(db: Session, user_id: str) -> bool:
     query = db.query(UserTable).filter(
