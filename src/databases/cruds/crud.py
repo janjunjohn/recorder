@@ -3,7 +3,7 @@ from databases.models.user import User as UserTable
 from schemas.user_schema import User
 
 
-def get_user(db: Session, user_id: str) -> User:
+def get_user_by_id(db: Session, user_id: str) -> User:
     return db.query(UserTable).filter(UserTable.id == user_id).first()
 
 
