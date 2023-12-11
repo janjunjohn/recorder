@@ -15,7 +15,7 @@ router = APIRouter(prefix='/users', tags=['users'])
 def signup(user: UserCreate, db: Session = Depends(get_db)) -> User:
     try:
         return user_service.create_user(db, user)
-    except UserAlreadyExistsError as e:
+    except (UserAlreadyExistsError, ValueError) as e:
         raise HTTPException(status_code=400, detail=e.args[0])
     except Exception as e:
         raise HTTPException(status_code=500, detail=e)
@@ -45,7 +45,7 @@ def get_user(user_id: str, db: Session = Depends(get_db)) -> User:
 def update_password(user_id: str, user_password_update: UserPasswordUpdate, db: Session = Depends(get_db)) -> None:
     try:
         return user_service.update_password(db, user_id, user_password_update)
-    except UserNotFoundError as e:
+    except (UserNotFoundError, ValueError) as e:
         raise HTTPException(status_code=404, detail=e.args[0])
     except Exception as e:
         raise HTTPException(status_code=500, detail=e)
@@ -55,7 +55,7 @@ def update_password(user_id: str, user_password_update: UserPasswordUpdate, db: 
 def update_user(user_id: str, user_info: UserBase, db: Session = Depends(get_db)) -> None:
     try:
         return user_service.update_user(db, user_id, user_info)
-    except UserNotFoundError as e:
+    except (UserNotFoundError, ValueError) as e:
         raise HTTPException(status_code=404, detail=e.args[0])
     except Exception as e:
         raise HTTPException(status_code=500, detail=e)

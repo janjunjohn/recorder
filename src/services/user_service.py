@@ -1,5 +1,6 @@
 import uuid
 import datetime
+from typing import Optional
 from sqlalchemy.orm import Session
 from databases.cruds import crud
 from schemas.user_schema import User, UserCreate, UserPasswordUpdate, UserBase
@@ -12,7 +13,7 @@ def get_user_by_email(db: Session, email: str) -> User:
 
 
 def get_user_by_id(db: Session, user_id: str) -> User:
-    user: User = crud.get_user_by_id(db, user_id)
+    user: Optional[User] = crud.get_user_by_id(db, user_id)
 
     if user is None:
         raise UserNotFoundError("ユーザーが見つかりませんでした")
