@@ -11,6 +11,14 @@ def get_user_by_email(db: Session, email: str) -> User:
     return crud.get_user_by_email(db, email)
 
 
+def get_user_by_id(db: Session, user_id: str) -> User:
+    user: User = crud.get_user_by_id(db, user_id)
+
+    if user is None:
+        raise UserNotFoundError("ユーザーが見つかりませんでした")
+    return user
+
+
 def create_user(db: Session, user: UserCreate) -> User:
     exists_user: bool = crud.exists_user_by_email(db, user.email)
     if exists_user:
