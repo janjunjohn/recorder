@@ -5,16 +5,14 @@ from schemas.user_schema import User
 
 
 def get_user_by_id(db: Session, user_id: str) -> Optional[User]:
-    user: Optional[User] = db.query(UserTable).filter(UserTable.id == user_id).first()
-    return User(id=user.id, email=user.email, username=user.username, hashed_password=user.hashed_password, is_active=user.is_active, created_at=user.created_at, updated_at=user.updated_at) if user else None
+    user: Optional[User] = db.query(UserTable).filter(UserTable.id == user_id).one()
+    return User(id=user.id, email=user.email, username=user.username, hashed_password=user.hashed_password, is_active=user.is_active, created_at=user.created_at, updated_at=user.updated_at)
 
 
 def get_user_by_email(db: Session, email: str) -> User:
     db_user: UserTable = db.query(UserTable).filter(
-        UserTable.email == email).first()
-    if db_user is None:
-        return None
-    return User(id=db_user.id, email=db_user.email, username=db_user.username, hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at) if db_user else None
+        UserTable.email == email).one()
+    return User(id=db_user.id, email=db_user.email, username=db_user.username, hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
 
 
 def exists_active_user_by_id(db: Session, user_id: str) -> bool:
@@ -29,7 +27,7 @@ def exists_user_by_email(db: Session, email: str) -> bool:
 
 
 def delete_user(db: Session, user_id: str) -> None:
-    db_user = db.query(UserTable).filter(UserTable.id == user_id).first()
+    db_user = db.query(UserTable).filter(UserTable.id == user_id).one()
     db_user.is_active = False
     db.commit()
     db.refresh(db_user)
@@ -45,7 +43,7 @@ def create_user(db: Session, user: User) -> User:
 
 
 def update_user(db: Session, user: User) -> User:
-    db_user = db.query(UserTable).filter(UserTable.id == user.id).first()
+    db_user = db.query(UserTable).filter(UserTable.id == user.id).one()
     db_user.email = user.email
     db_user.username = user.username
     db_user.hashed_password = user.hashed_password
