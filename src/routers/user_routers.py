@@ -4,7 +4,7 @@ from typing import List
 
 from databases.settings.database import get_db
 from schemas.user_schema import UserCreate, User, UserPasswordUpdate, UserBase
-from services.common.errors import UserAlreadyExistsError, UserNotFoundError
+from services.common.errors import UserAlreadyExistsError, UserNotFoundError, PasswordNotMatchError
 from services import user_service
 
 
@@ -45,7 +45,7 @@ def get_user(user_id: str, db: Session = Depends(get_db)) -> User:
 def update_password(user_id: str, user_password_update: UserPasswordUpdate, db: Session = Depends(get_db)) -> None:
     try:
         return user_service.update_password(db, user_id, user_password_update)
-    except ValueError as e:
+    except (ValueError, PasswordNotMatchError) as e:
         raise HTTPException(status_code=400, detail=e.args[0])
     except UserNotFoundError as e:
         raise HTTPException(status_code=404, detail=e.args[0])
