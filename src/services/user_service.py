@@ -1,14 +1,19 @@
 import uuid
 import datetime
+from typing import Optional
 from sqlalchemy.orm import Session
 from src.databases.cruds import user_crud
-from schemas.user_schema import User, UserCreate
-from services.common.errors import UserAlreadyExistsError, UserNotFoundError
+from schemas.user_schema import User, UserCreate, UserPasswordUpdate, UserBase
+from services.common.errors import UserAlreadyExistsError, UserNotFoundError, PasswordNotMatchError
 from services.common.hash import HashService
 
 
 def get_user_by_email(db: Session, email: str) -> User:
     return user_crud.get_user_by_email(db, email)
+
+
+def get_user_by_id(db: Session, user_id: str) -> User:
+    return user_crud.get_user_by_id(db, user_id)
 
 
 def create_user(db: Session, user: UserCreate) -> User:
@@ -36,3 +41,37 @@ def delete_user(db: Session, user_id: str) -> None:
         raise UserNotFoundError("ユーザーが見つかりませんでした")
 
     return user_crud.delete_user(db, user_id)
+
+def update_password(db: Session, user_id: str, user_password_update: UserPasswordUpdate) -> None:
+    user: User = get_user_by_id(db, user_id)
+    if not HashService.verify_password(user_password_update.old_password, user.hashed_password):
+        raise PasswordNotMatchError("パスワードが一致しませんでした")
+
+    hashed_password: str = HashService.get_password_hash(
+        user_password_update.password)
+
+    user = User(
+        id=user.id,
+        email=user.email,
+        username=user.username,
+        hashed_password=hashed_password,
+        is_active=user.is_active,
+        created_at=user.created_at,
+        updated_at=datetime.datetime.now()
+    )
+    user_crud.update_user(db, user)
+
+
+def update_user(db: Session, user_id: str, user_info: UserBase) -> None:
+    user: User = get_user_by_id(db, user_id)
+
+    user = User(
+        id=user.id,
+        email=user_info.email,
+        username=user_info.username,
+        hashed_password=user.hashed_password,
+        is_active=user.is_active,
+        created_at=user.created_at,
+        updated_at=datetime.datetime.now()
+    )
+    user_crud.update_user(db, user)

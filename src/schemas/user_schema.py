@@ -44,3 +44,16 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class UserPasswordUpdate(BaseModel):
+    password: str
+    old_password: str
+
+    @field_validator('password')
+    def password_is_valid(cls, password):
+        if len(password) < 8:
+            raise ValueError('パスワードは8文字以上にしてください。')
+        if len(password) > 20:
+            raise ValueError('パスワードは20文字以下にしてください。')
+        return password
