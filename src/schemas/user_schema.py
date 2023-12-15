@@ -9,7 +9,7 @@ class UserBase(BaseModel):
     email: str
 
     @field_validator('username')
-    def username_is_valid(cls, username):
+    def username_is_valid(cls, username: str) -> str:
         if len(username) < 3:
             raise ValueError('ユーザー名は3文字以上にしてください。')
         if len(username) > 20:
@@ -17,7 +17,7 @@ class UserBase(BaseModel):
         return username
 
     @field_validator('email')
-    def email_is_valid(cls, email):
+    def email_is_valid(cls, email: str) -> str:
         if '@' not in email:
             raise ValueError('メールアドレスの形式が正しくありません。')
         return email
@@ -27,7 +27,7 @@ class UserCreate(UserBase):
     password: str
 
     @field_validator('password')
-    def password_is_valid(cls, password):
+    def password_is_valid(cls, password: str) -> str:
         if len(password) < 8:
             raise ValueError('パスワードは8文字以上にしてください。')
         if len(password) > 20:
@@ -51,7 +51,7 @@ class UserPasswordUpdate(BaseModel):
     old_password: str
 
     @field_validator('password')
-    def password_is_valid(cls, password):
+    def password_is_valid(cls, password: str) -> str:
         if len(password) < 8:
             raise ValueError('パスワードは8文字以上にしてください。')
         if len(password) > 20:
