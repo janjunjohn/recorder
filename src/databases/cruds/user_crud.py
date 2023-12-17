@@ -9,7 +9,8 @@ from services.common.errors import UserNotFoundError
 def get_user_by_id(db: Session, user_id: str) -> User:
     try:
         db_user: User = db.query(UserTable).filter(UserTable.id == user_id).one()
-        return User(id=db_user.id, email=db_user.email, username=db_user.username, hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
+        return User(id=db_user.id, email=db_user.email, username=db_user.username,
+                    hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
     except NoResultFound as e:
         raise UserNotFoundError("ユーザーが見つかりませんでした")
 
@@ -19,7 +20,8 @@ def get_user_by_email(db: Session, email: str) -> User:
     try:
         db_user: UserTable = db.query(UserTable).filter(
             UserTable.email == email).one()
-        return User(id=db_user.id, email=db_user.email, username=db_user.username, hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
+        return User(id=db_user.id, email=db_user.email, username=db_user.username,
+                    hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
     except NoResultFound as e:
         raise UserNotFoundError("ユーザーが見つかりませんでした")
 
@@ -47,7 +49,8 @@ def create_user(db: Session, user: User) -> User:
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return User(id=db_user.id, email=db_user.email, username=db_user.username, hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
+    return User(id=db_user.id, email=db_user.email, username=db_user.username,
+                hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
 
 
 def update_user(db: Session, user: User) -> User:
@@ -59,4 +62,5 @@ def update_user(db: Session, user: User) -> User:
     db_user.updated_at = user.updated_at
     db.commit()
     db.refresh(db_user)
-    return User(id=db_user.id, email=db_user.email, username=db_user.username, hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
+    return User(id=db_user.id, email=db_user.email, username=db_user.username,
+                hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)

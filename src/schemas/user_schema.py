@@ -13,7 +13,7 @@ class UserBase(BaseModel):
         if len(username) < 3:
             raise ValueError('ユーザー名は3文字以上にしてください。')
         if len(username) > 20:
-            raise ValueError('ユーザー名は50文字以下にしてください。')
+            raise ValueError('ユーザー名は20文字以下にしてください。')
         return username
 
     @field_validator('email')
