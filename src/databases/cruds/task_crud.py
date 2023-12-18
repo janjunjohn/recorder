@@ -8,7 +8,7 @@ from schemas.task_schema import Task
 from services.common.errors import TaskNotFoundError
 
 
-def exists_task_by_task_name(db: Session, task_name: str, user_id: str | uuid.UUID) -> bool:
+def exists_task_of_user_by_task_name(db: Session, task_name: str, user_id: str | uuid.UUID) -> bool:
     query = db.query(TaskTable).filter(TaskTable.user_id == user_id, TaskTable.task_name == task_name)
     return db.query(query.exists()).scalar()
 
