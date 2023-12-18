@@ -7,9 +7,6 @@ from typing import Optional
 
 class TaskBase(BaseModel):
     user_id: str | uuid.UUID
-    
-
-class TaskCreate(TaskBase):
     task_name: str
 
     @field_validator('task_name')
@@ -21,9 +18,12 @@ class TaskCreate(TaskBase):
         return task_name
     
 
+class TaskCreate(TaskBase):
+    pass
+    
+
 class Task(TaskBase):
     id: str | uuid.UUID
-    task_name: str
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
     
