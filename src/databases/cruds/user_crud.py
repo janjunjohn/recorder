@@ -1,9 +1,11 @@
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import DataError
+
 from databases.models.user import User as UserTable
 from schemas.user_schema import User
-from services.common.errors import UserNotFoundError
+from services.common.errors import UserNotFoundError, InvalidUUIDError
 
 
 def get_user_by_id(db: Session, user_id: str) -> User:
@@ -11,9 +13,10 @@ def get_user_by_id(db: Session, user_id: str) -> User:
         db_user: User = db.query(UserTable).filter(UserTable.id == user_id).one()
         return User(id=db_user.id, email=db_user.email, username=db_user.username,
                     hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
-    except NoResultFound as e:
+    except DataError:
+        raise InvalidUUIDError("不正なidです")
+    except NoResultFound:
         raise UserNotFoundError("ユーザーが見つかりませんでした")
-
 
 
 def get_user_by_email(db: Session, email: str) -> User:
@@ -22,8 +25,9 @@ def get_user_by_email(db: Session, email: str) -> User:
             UserTable.email == email).one()
         return User(id=db_user.id, email=db_user.email, username=db_user.username,
                     hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
-    except NoResultFound as e:
+    except NoResultFound:
         raise UserNotFoundError("ユーザーが見つかりませんでした")
+
 
 def exists_active_user_by_id(db: Session, user_id: str) -> bool:
     query = db.query(UserTable).filter(
