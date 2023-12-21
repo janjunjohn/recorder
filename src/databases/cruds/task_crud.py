@@ -11,7 +11,7 @@ from schemas.task_schema import Task
 from services.common.errors import TaskNotFoundError, InvalidUUIDError
 
 
-def exists_task_of_user_by_task_name(db: Session, task_name: str, user_id: str | uuid.UUID) -> bool:
+def exists_task_of_user_by_task_name(db: Session, task_name: str, user_id: str) -> bool:
     query = db.query(TaskTable).filter(TaskTable.user_id == user_id, TaskTable.task_name == task_name)
     return db.query(query.exists()).scalar()
 
@@ -26,7 +26,7 @@ def create_task(db:Session, task: Task) -> Task:
                 created_at=db_task.created_at, updated_at=db_task.updated_at)
 
 
-def get_task_list_by_user_id(db: Session, user_id: str | uuid.UUID) -> List[Task]:
+def get_task_list_by_user_id(db: Session, user_id: str) -> List[Task]:
     try:
         db_task_list = db.query(TaskTable).filter(TaskTable.user_id == user_id).all()
     except DataError:

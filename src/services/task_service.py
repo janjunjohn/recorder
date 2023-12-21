@@ -25,5 +25,5 @@ def create_task(db: Session, task:TaskCreate) -> Task:
     return task_crud.create_task(db, task)
 
 
-def get_task_list_by_user_id(db: Session, user_id: str | uuid.UUID) -> List[Task]:
+def get_task_list_by_user_id(db: Session, user_id: str) -> List[Task]:
     return task_crud.get_task_list_by_user_id(db, user_id)
