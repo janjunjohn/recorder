@@ -22,3 +22,9 @@ class TaskAlreadyExistsError(Exception):
 class TaskNotFoundError(Exception):
     """タスクが存在しない場合のエラー"""
     pass
+
+
+# common
+class InvalidUUIDError(Exception):
+    """UUIDが不正な場合のエラー"""
+    pass

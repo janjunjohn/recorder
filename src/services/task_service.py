@@ -1,7 +1,7 @@
 import uuid
 import datetime
 
-from typing import Optional
+from typing import Optional, List
 from sqlalchemy.orm import Session
 
 from databases.cruds import task_crud
@@ -23,3 +23,7 @@ def create_task(db: Session, task:TaskCreate) -> Task:
     )
     
     return task_crud.create_task(db, task)
+
+
+def get_task_list_by_user_id(db: Session, user_id: str) -> List[Task]:
+    return task_crud.get_task_list_by_user_id(db, user_id)
