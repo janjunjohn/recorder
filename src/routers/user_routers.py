@@ -35,8 +35,6 @@ def delete_user(user_id: str, db: Session = Depends(get_db)) -> None:
 def get_user(user_id: str, db: Session = Depends(get_db)) -> User:
     try:
         return user_service.get_user_by_id(db, user_id)
-    except InvalidUUIDError as e:
-        raise HTTPException(status_code=400, detail=e.args[0])
     except UserNotFoundError as e:
         raise HTTPException(status_code=404, detail=e.args[0])
     except Exception as e:

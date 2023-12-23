@@ -13,8 +13,6 @@ def get_user_by_id(db: Session, user_id: str) -> User:
         db_user: User = db.query(UserTable).filter(UserTable.id == user_id).one()
         return User(id=db_user.id, email=db_user.email, username=db_user.username,
                     hashed_password=db_user.hashed_password, is_active=db_user.is_active, created_at=db_user.created_at, updated_at=db_user.updated_at)
-    except DataError:
-        raise InvalidUUIDError("不正なidです")
     except NoResultFound:
         raise UserNotFoundError("ユーザーが見つかりませんでした")
 

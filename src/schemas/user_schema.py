@@ -45,6 +45,14 @@ class User(UserBase):
     class Config:
         orm_mode = True
 
+    @field_validator('id')
+    def id_is_valid(cls, id: str) -> str:
+        try:
+            uuid.UUID(id)
+        except ValueError:
+            raise ValueError('IDの形式が正しくありません。')
+        return id
+
 
 class UserPasswordUpdate(BaseModel):
     password: str
