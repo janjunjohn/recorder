@@ -1,11 +1,9 @@
-from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.exc import DataError
 
 from databases.models.user import User as UserTable
 from schemas.user_schema import User
-from services.common.errors import UserNotFoundError, InvalidUUIDError
+from services.common.errors import UserNotFoundError
 
 
 def get_user_by_id(db: Session, user_id: str) -> User:
