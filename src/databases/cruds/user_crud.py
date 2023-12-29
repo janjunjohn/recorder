@@ -44,7 +44,7 @@ def delete_user(db: Session, user_id: UserId) -> None:
 
 
 def create_user(db: Session, user: User) -> User:
-    db_user = UserTable(id=user.id, email=user.email, username=user.username,
+    db_user = UserTable(id=user.id.id, email=user.email, username=user.username,
                         hashed_password=user.hashed_password, is_active=user.is_active, created_at=user.created_at, updated_at=user.updated_at)
     db.add(db_user)
     db.commit()

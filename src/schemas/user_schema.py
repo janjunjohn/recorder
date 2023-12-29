@@ -8,13 +8,13 @@ class UserId(BaseModel):
     id: str | uuid.UUID
 
     @field_validator('id')
-    def id_is_valid(cls, id: str | uuid.UUID) -> str:
+    def id_is_valid(cls, value: str | uuid.UUID) -> str:
+        if isinstance(value, uuid.UUID):
+            return str(value)
         try:
-            uuid.UUID(id)
+            return str(uuid.UUID(value))
         except ValueError:
             raise ValueError('IDの形式が正しくありません。')
-        return str(id)
-
 
 class UserBase(BaseModel):
     username: str
