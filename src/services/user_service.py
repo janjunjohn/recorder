@@ -1,11 +1,9 @@
 import uuid
 import datetime
-
-from typing import Optional
 from sqlalchemy.orm import Session
 
 from databases.cruds import user_crud
-from schemas.user_schema import User, UserCreate, UserPasswordUpdate, UserBase
+from schemas.user_schema import User, UserCreate, UserPasswordUpdate, UserBase, UserId
 from services.common.errors import UserAlreadyExistsError, UserNotFoundError, PasswordNotMatchError
 from services.common.hash import HashService
 
@@ -14,7 +12,7 @@ def get_user_by_email(db: Session, email: str) -> User:
     return user_crud.get_user_by_email(db, email)
 
 
-def get_user_by_id(db: Session, user_id: str) -> User:
+def get_user_by_id(db: Session, user_id: UserId) -> User:
     return user_crud.get_user_by_id(db, user_id)
 
 
@@ -25,7 +23,7 @@ def create_user(db: Session, user: UserCreate) -> User:
     hashed_password: str = HashService.get_password_hash(user.password)
 
     user: User = User(
-        id=uuid.uuid4(),
+        id=UserId(id=uuid.uuid4()),
         email=user.email,
         username=user.username,
         hashed_password=hashed_password,
@@ -37,14 +35,15 @@ def create_user(db: Session, user: UserCreate) -> User:
     return user_crud.create_user(db, user)
 
 
-def delete_user(db: Session, user_id: str) -> None:
+def delete_user(db: Session, user_id: UserId) -> None:
     exists_user: bool = user_crud.exists_active_user_by_id(db, user_id)
     if not exists_user:
         raise UserNotFoundError("ユーザーが見つかりませんでした")
 
     return user_crud.delete_user(db, user_id)
 
-def update_password(db: Session, user_id: str, user_password_update: UserPasswordUpdate) -> None:
+
+def update_password(db: Session, user_id: UserId, user_password_update: UserPasswordUpdate) -> None:
     user: User = get_user_by_id(db, user_id)
     if not HashService.verify_password(user_password_update.old_password, user.hashed_password):
         raise PasswordNotMatchError("パスワードが一致しませんでした")
@@ -53,7 +52,7 @@ def update_password(db: Session, user_id: str, user_password_update: UserPasswor
         user_password_update.password)
 
     user = User(
-        id=user.id,
+        id=UserId(id=user.id),
         email=user.email,
         username=user.username,
         hashed_password=hashed_password,

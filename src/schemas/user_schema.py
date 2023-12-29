@@ -4,6 +4,18 @@ from pydantic import BaseModel, field_validator
 from typing import Optional
 
 
+class UserId(BaseModel):
+    id: str | uuid.UUID
+
+    @field_validator('id')
+    def id_is_valid(cls, id: str | uuid.UUID) -> str:
+        try:
+            uuid.UUID(id)
+        except ValueError:
+            raise ValueError('IDの形式が正しくありません。')
+        return str(id)
+
+
 class UserBase(BaseModel):
     username: str
     email: str
@@ -36,7 +48,7 @@ class UserCreate(UserBase):
 
 
 class User(UserBase):
-    id: str | uuid.UUID
+    id: UserId
     hashed_password: str
     is_active: bool
     created_at: Optional[datetime.datetime] = None
@@ -44,14 +56,6 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
-
-    @field_validator('id')
-    def id_is_valid(cls, id: str) -> str:
-        try:
-            uuid.UUID(id)
-        except ValueError:
-            raise ValueError('IDの形式が正しくありません。')
-        return id
 
 
 class UserPasswordUpdate(BaseModel):

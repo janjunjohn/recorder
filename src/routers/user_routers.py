@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from databases.settings.database import get_db
-from schemas.user_schema import UserCreate, User, UserPasswordUpdate, UserBase
+from schemas.user_schema import UserCreate, User, UserPasswordUpdate, UserBase, UserId
 from services.common.errors import UserAlreadyExistsError, UserNotFoundError, PasswordNotMatchError, InvalidUUIDError
 from services import user_service
 
@@ -24,7 +24,7 @@ def signup(user: UserCreate, db: Session = Depends(get_db)) -> User:
 @router.delete("/{user_id}")
 def delete_user(user_id: str, db: Session = Depends(get_db)) -> None:
     try:
-        return user_service.delete_user(db, user_id)
+        return user_service.delete_user(db, UserId(id=user_id))
     except UserNotFoundError as e:
         raise HTTPException(status_code=404, detail=e.args[0])
     except Exception as e:
@@ -34,7 +34,7 @@ def delete_user(user_id: str, db: Session = Depends(get_db)) -> None:
 @router.get("/{user_id}")
 def get_user(user_id: str, db: Session = Depends(get_db)) -> User:
     try:
-        return user_service.get_user_by_id(db, user_id)
+        return user_service.get_user_by_id(db, UserId(id=user_id))
     except UserNotFoundError as e:
         raise HTTPException(status_code=404, detail=e.args[0])
     except Exception as e:
