@@ -44,7 +44,7 @@ def get_user(user_id: str, db: Session = Depends(get_db)) -> User:
 @router.put("/{user_id}")
 def update_password(user_id: str, user_password_update: UserPasswordUpdate, db: Session = Depends(get_db)) -> None:
     try:
-        return user_service.update_password(db, user_id, user_password_update)
+        return user_service.update_password(db, UserId(id=user_id), user_password_update)
     except (ValueError, PasswordNotMatchError) as e:
         raise HTTPException(status_code=400, detail=e.args[0])
     except UserNotFoundError as e:
@@ -56,7 +56,7 @@ def update_password(user_id: str, user_password_update: UserPasswordUpdate, db: 
 @router.put("/{user_id}")
 def update_user(user_id: str, user_info: UserBase, db: Session = Depends(get_db)) -> None:
     try:
-        return user_service.update_user(db, user_id, user_info)
+        return user_service.update_user(db, UserId(id=user_id), user_info)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=e.args[0])
     except UserNotFoundError as e:

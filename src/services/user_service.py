@@ -63,11 +63,11 @@ def update_password(db: Session, user_id: UserId, user_password_update: UserPass
     user_crud.update_user(db, user)
 
 
-def update_user(db: Session, user_id: str, user_info: UserBase) -> None:
+def update_user(db: Session, user_id: UserId, user_info: UserBase) -> None:
     user: User = get_user_by_id(db, user_id)
 
     user = User(
-        id=user.id,
+        id=user.id.id,
         email=user_info.email,
         username=user_info.username,
         hashed_password=user.hashed_password,
