@@ -6,6 +6,7 @@ from databases.cruds import user_crud
 from schemas.user_schema import User, UserCreate, UserPasswordUpdate, UserBase, UserId
 from services.common.errors import UserAlreadyExistsError, UserNotFoundError, PasswordNotMatchError
 from services.common.hash import HashService
+from schemas.user_schema import UserPassword
 
 
 def get_user_by_email(db: Session, email: str) -> User:
@@ -20,8 +21,10 @@ def create_user(db: Session, user: UserCreate) -> User:
     exists_user: bool = user_crud.exists_user_by_email(db, user.email)
     if exists_user:
         raise UserAlreadyExistsError("このemailはすでに存在します")
-    hashed_password: str = HashService.get_password_hash(user.password)
 
+    password: UserPassword = UserPassword(password=user.password)
+
+    hashed_password: str = HashService.get_password_hash(password)
     user: User = User(
         id=UserId(id=uuid.uuid4()),
         email=user.email,
@@ -45,7 +48,12 @@ def delete_user(db: Session, user_id: UserId) -> None:
 
 def update_password(db: Session, user_id: UserId, user_password_update: UserPasswordUpdate) -> None:
     user: User = get_user_by_id(db, user_id)
-    if not HashService.verify_password(user_password_update.old_password, user.hashed_password):
+    old_password: UserPassword = UserPassword(
+        password=user_password_update.old_password)
+    new_password: UserPassword = UserPassword(
+        password=user_password_update.password)
+
+    if not HashService.verify_password(old_password, user.hashed_password):
         raise PasswordNotMatchError("パスワードが一致しませんでした")
 
     hashed_password: str = HashService.get_password_hash(
