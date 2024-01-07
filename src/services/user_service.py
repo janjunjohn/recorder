@@ -32,13 +32,12 @@ def create_user(db: Session, user: UserCreateRequest) -> User:
         id=UserId(id=uuid.uuid4()),
         email=user.email,
         username=user.username,
-        hashed_password=hashed_password,
         is_active=True,
         created_at=datetime.datetime.now(),
         updated_at=datetime.datetime.now()
     )
 
-    return user_crud.create_user(db, user)
+    return user_crud.create_user(db, user, hashed_password)
 
 
 def delete_user(db: Session, user_id: UserId) -> None:
@@ -50,19 +49,29 @@ def delete_user(db: Session, user_id: UserId) -> None:
 
 
 def update_password(db: Session, user_id: UserId, user_password_update: UserPasswordUpdateRequest) -> None:
-    user: User = get_user_by_id(db, user_id)
+    user_password: UserPassword = user_crud.get_user_password_by_id(
+        db, user_id)
     old_password: UserPassword = UserPassword(
         password=user_password_update.old_password)
+    if not HashService.verify_password(old_password.value, user_password.value):
+        raise PasswordNotMatchError("パスワードが一致しませんでした")
     new_password: UserPassword = UserPassword(
         password=user_password_update.password)
-
-    if not HashService.verify_password(old_password.value, new_password.value):
-        raise PasswordNotMatchError("パスワードが一致しませんでした")
-
     hashed_password: str = HashService.get_password_hash(
         new_password.value)
 
-    # TODO: ここでUserPasswordを更新する
+    # updated_atの更新
+    user: User = get_user_by_id(db, user_id)
+    updated_user = User(
+        id=user.id.id,
+        email=user.email,
+        username=user.username,
+        is_active=user.is_active,
+        created_at=user.created_at,
+        updated_at=datetime.datetime.now()
+    )
+
+    user_crud.update_user(db, updated_user, hashed_password)
 
 
 def update_user(db: Session, user_id: UserId, user_info: UserUpdateRequest) -> None:
