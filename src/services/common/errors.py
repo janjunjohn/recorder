@@ -1,3 +1,14 @@
+# common
+class InvalidUUIDError(Exception):
+    """UUIDが不正な場合のエラー"""
+    pass
+
+
+class ValidationError(Exception):
+    """バリデーションエラー"""
+    pass
+
+
 # User
 class UserAlreadyExistsError(Exception):
     """ユーザーがすでに存在する場合のエラー"""
@@ -17,14 +28,8 @@ class PasswordNotMatchError(Exception):
 # Task
 class TaskAlreadyExistsError(Exception):
     """タスクがすでに存在している場合のエラー"""
-    
+
 
 class TaskNotFoundError(Exception):
     """タスクが存在しない場合のエラー"""
-    pass
-
-
-# common
-class InvalidUUIDError(Exception):
-    """UUIDが不正な場合のエラー"""
     pass
