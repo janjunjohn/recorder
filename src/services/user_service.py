@@ -71,7 +71,7 @@ def update_password(db: Session, user_id: UserId, user_password_update: UserPass
         updated_at=datetime.datetime.now()
     )
 
-    user_crud.update_user(db, updated_user, hashed_password)
+    user_crud.update_password(db, updated_user, hashed_password)
 
 
 def update_user(db: Session, user_id: UserId, user_info: UserUpdateRequest) -> None:
