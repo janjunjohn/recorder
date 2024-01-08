@@ -47,7 +47,7 @@ def get_user(user_id: str, db: Session = Depends(get_db)) -> User:
         raise HTTPException(status_code=500, detail=e)
 
 
-@router.put("/{user_id}")
+@router.patch("/{user_id}")
 def update_password(user_id: str, user_password_update: UserPasswordUpdateRequest, db: Session = Depends(get_db)) -> None:
     try:
         return user_service.update_password(db, UserId(id=user_id), user_password_update)
