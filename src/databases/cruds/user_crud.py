@@ -67,7 +67,6 @@ def update_user(db: Session, user: User) -> User:
     db_user = db.query(UserTable).filter(UserTable.id == user.id.id).one()
     db_user.email = user.email
     db_user.username = user.username
-    db_user.is_active = user.is_active
     db_user.updated_at = user.updated_at
     db.commit()
     db.refresh(db_user)
