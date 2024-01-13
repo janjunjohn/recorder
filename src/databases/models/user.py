@@ -8,6 +8,7 @@ from sqlalchemy.orm import relationship
 from databases.settings.database import Base
 from databases.models.task import Task
 
+
 class User(Base):
     __tablename__ = "users"
 

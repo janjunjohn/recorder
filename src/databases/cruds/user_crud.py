@@ -4,7 +4,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from databases.models.user import User as UserTable
 from models.user.user_id import UserId
 from models.user.user import User
-from src.models.user.user_password import UserPassword
+from models.user.user_password import UserPassword
 from services.common.errors import UserNotFoundError
 
 
