@@ -8,7 +8,7 @@ from services.common.errors import UserAlreadyExistsError, UserNotFoundError, Pa
 from services.common.hash import HashService
 from models.user.user_id import UserId
 from models.user.user import User
-from src.models.user.user_password import UserPassword
+from models.user.user_password import UserPassword
 
 
 def get_user_by_email(db: Session, email: str) -> User:
@@ -63,7 +63,7 @@ def update_password(db: Session, user_id: UserId, user_password_update: UserPass
     # updated_atの更新
     user: User = get_user_by_id(db, user_id)
     updated_user = User(
-        id=user.id.id,
+        id=UserId(id=user.id),
         email=user.email,
         username=user.username,
         is_active=user.is_active,
@@ -78,7 +78,7 @@ def update_user(db: Session, user_id: UserId, user_info: UserUpdateRequest) -> N
     user: User = get_user_by_id(db, user_id)
 
     user = User(
-        id=user.id.id,
+        id=UserId(id=user.id),
         email=user_info.email,
         username=user_info.username,
         is_active=user.is_active,

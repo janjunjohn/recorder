@@ -3,19 +3,20 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from databases.settings.database import get_db
-from schemas.task_schema import TaskCreate, Task
-from services.common.errors import TaskAlreadyExistsError, TaskNotFoundError, InvalidUUIDError
+from services.common.errors import TaskAlreadyExistsError, TaskNotFoundError, InvalidUUIDError, ValidationError
 from services import task_service
+from models.user.user_id import UserId
+from models.task.task import Task
 
 
 router = APIRouter(prefix='/tasks', tags=['tasks'])
 
 
-@router.post("/")
-def create_task(task: TaskCreate, db: Session = Depends(get_db)) -> Task:
+@router.post("/{user_id}")
+def create_task(user_id: str, task_name, db: Session = Depends(get_db)) -> Task:
     try:
-        return task_service.create_task(db, task)
-    except (TaskAlreadyExistsError, ValueError) as e:
+        return task_service.create_task(db, UserId(id=user_id), task_name)
+    except (TaskAlreadyExistsError, ValidationError, InvalidUUIDError) as e:
         raise HTTPException(status_code=400, detail=e.args[0])
     except Exception as e:
         raise HTTPException(status_code=500, detail=e)
@@ -24,6 +25,6 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db)) -> Task:
 @router.get("/{user_id}")
 def get_task_list(user_id: str, db: Session = Depends(get_db)) -> List[Task]:
     try:
-        return task_service.get_task_list_by_user_id(db, user_id) 
+        return task_service.get_task_list_by_user_id(db, UserId(id=user_id))
     except InvalidUUIDError as e:
         raise HTTPException(status_code=400, detail=e.args[0])
