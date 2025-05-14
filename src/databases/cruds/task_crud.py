@@ -21,7 +21,7 @@ def create_task(db: Session, task: Task) -> Task:
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
-    return Task(id=TaskId(db_task.id), user_id=UserId(id=db_task.user_id), task_name=db_task.task_name,
+    return Task(id=TaskId(id=db_task.id), user_id=UserId(id=db_task.user_id), task_name=db_task.task_name,
                 created_at=db_task.created_at, updated_at=db_task.updated_at)
 
 
