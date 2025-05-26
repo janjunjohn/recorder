@@ -6,3 +6,4 @@ python-dotenv
 pydantic
 alembic
 passlib==1.7.4
+mypy

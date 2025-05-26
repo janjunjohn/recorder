@@ -14,9 +14,9 @@ router = APIRouter(prefix='/users', tags=['users'])
 
 
 @router.post("/")
-def signup(user: UserCreateRequest, db: Session = Depends(get_db)) -> User:
+def signup(user_create: UserCreateRequest, db: Session = Depends(get_db)) -> User:
     try:
-        return user_service.create_user(db, user)
+        return user_service.create_user(db, user_create)
     except (UserAlreadyExistsError, ValidationError) as e:
         raise HTTPException(status_code=400, detail=e.args[0])
     except Exception as e:
@@ -38,7 +38,7 @@ def delete_user(user_id: str, db: Session = Depends(get_db)) -> None:
 @router.get("/{user_id}")
 def get_user(user_id: str, db: Session = Depends(get_db)) -> User:
     try:
-        return user_service.get_user_by_id(db, UserId(id=user_id))
+        return user_service.get_user_by_user_id(db, UserId(id=user_id))
     except InvalidUUIDError as e:
         raise HTTPException(status_code=400, detail=e.args[0])
     except UserNotFoundError as e:
@@ -60,9 +60,9 @@ def update_password(user_id: str, user_password_update: UserPasswordUpdateReques
 
 
 @router.put("/{user_id}")
-def update_user(user_id: str, new_user_info: UserUpdateRequest, db: Session = Depends(get_db)) -> None:
+def update_user(user_id: str, user_update: UserUpdateRequest, db: Session = Depends(get_db)) -> None:
     try:
-        return user_service.update_user(db, UserId(id=user_id), new_user_info)
+        return user_service.update_user(db, UserId(id=user_id), user_update)
     except (InvalidUUIDError, ValidationError) as e:
         raise HTTPException(status_code=400, detail=e.args[0])
     except UserNotFoundError as e:

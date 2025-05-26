@@ -15,7 +15,7 @@ class Task(BaseModel):
     updated_at: Optional[datetime.datetime] = None
 
     @field_validator('task_name')
-    def task_name_is_valid(cls, task_name):
+    def task_name_is_valid(cls, task_name: str) -> str:
         if len(task_name) < 1:
             raise ValueError('タスク名は1文字以上にしてください。')
         if len(task_name) > 15:
