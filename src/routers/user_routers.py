@@ -4,7 +4,9 @@ from typing import List
 
 from databases.settings.database import get_db
 from schemas.user_schema import UserCreateRequest, UserPasswordUpdateRequest, UserUpdateRequest
-from services.common.errors import UserAlreadyExistsError, UserNotFoundError, PasswordNotMatchError, InvalidUUIDError, ValidationError
+from services.common.errors import (
+    UserAlreadyExistsError, UserNotFoundError, PasswordNotMatchError, InvalidUUIDError, ValidationError
+)
 from services import user_service
 from models.user.user_id import UserId
 from models.user.user import User
@@ -23,18 +25,6 @@ def signup(user_create: UserCreateRequest, db: Session = Depends(get_db)) -> Use
         raise HTTPException(status_code=500, detail=e)
 
 
-@router.delete("/{user_id}")
-def delete_user(user_id: str, db: Session = Depends(get_db)) -> None:
-    try:
-        return user_service.delete_user(db, UserId(id=user_id))
-    except InvalidUUIDError as e:
-        raise HTTPException(status_code=400, detail=e.args[0])
-    except UserNotFoundError as e:
-        raise HTTPException(status_code=404, detail=e.args[0])
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=e)
-
-
 @router.get("/{user_id}")
 def get_user(user_id: str, db: Session = Depends(get_db)) -> User:
     try:
@@ -48,7 +38,9 @@ def get_user(user_id: str, db: Session = Depends(get_db)) -> User:
 
 
 @router.patch("/{user_id}")
-def update_password(user_id: str, user_password_update: UserPasswordUpdateRequest, db: Session = Depends(get_db)) -> None:
+def update_password(
+    user_id: str, user_password_update: UserPasswordUpdateRequest, db: Session = Depends(get_db)
+) -> None:
     try:
         return user_service.update_password(db, UserId(id=user_id), user_password_update)
     except (InvalidUUIDError, PasswordNotMatchError, ValidationError) as e:
@@ -64,6 +56,18 @@ def update_user(user_id: str, user_update: UserUpdateRequest, db: Session = Depe
     try:
         return user_service.update_user(db, UserId(id=user_id), user_update)
     except (InvalidUUIDError, ValidationError) as e:
+        raise HTTPException(status_code=400, detail=e.args[0])
+    except UserNotFoundError as e:
+        raise HTTPException(status_code=404, detail=e.args[0])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=e)
+
+
+@router.delete("/{user_id}")
+def delete_user(user_id: str, db: Session = Depends(get_db)) -> None:
+    try:
+        return user_service.delete_user(db, UserId(id=user_id))
+    except InvalidUUIDError as e:
         raise HTTPException(status_code=400, detail=e.args[0])
     except UserNotFoundError as e:
         raise HTTPException(status_code=404, detail=e.args[0])

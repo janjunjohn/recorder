@@ -23,6 +23,24 @@ def create_task(user_id: str, task_create: TaskCreateRequest, db: Session = Depe
         raise HTTPException(status_code=500, detail=e)
 
 
+@router.get("/{user_id}/{task_id}")
+def get_task(user_id: str, task_id: str, db: Session = Depends(get_db)) -> Task:
+    try:
+        return task_service.get_task_by_id(user_id, task_id, db)
+    except (TaskNotFoundError, InvalidUUIDError) as e:
+        raise HTTPException(status_code=400, detail=e.args[0])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=e)
+
+
+@router.get("/{user_id}")
+def get_task_list(user_id: str, db: Session = Depends(get_db)) -> List[Task]:
+    try:
+        return task_service.get_task_list_by_user_id(db, UserId(id=user_id))
+    except InvalidUUIDError as e:
+        raise HTTPException(status_code=400, detail=e.args[0])
+
+
 @router.post("/{user_id}/{task_id}")
 def update_task_name(user_id: str, task_id: str, task_name_update: TaskNameUpdateRequest, db: Session = Depends(get_db)) -> Task:
     try:
@@ -41,21 +59,3 @@ def delete_task(task_id: str, db: Session = Depends(get_db)) -> None:
         raise HTTPException(status_code=400, detail=e.args[0])
     except Exception as e:
         raise HTTPException(status_code=500, detail=e)
-
-
-@router.get("/{user_id}/{task_id}")
-def get_task(user_id: str, task_id: str, db: Session = Depends(get_db)) -> Task:
-    try:
-        return task_service.get_task_by_id(user_id, task_id, db)
-    except (TaskNotFoundError, InvalidUUIDError) as e:
-        raise HTTPException(status_code=400, detail=e.args[0])
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=e)
-
-
-@router.get("/{user_id}")
-def get_task_list(user_id: str, db: Session = Depends(get_db)) -> List[Task]:
-    try:
-        return task_service.get_task_list_by_user_id(db, UserId(id=user_id))
-    except InvalidUUIDError as e:
-        raise HTTPException(status_code=400, detail=e.args[0])

@@ -1,5 +1,4 @@
 import uuid
-import datetime
 from sqlalchemy.orm import Session
 
 from databases.cruds import user_crud
@@ -9,14 +8,6 @@ from services.common.hash import HashService
 from models.user.user_id import UserId
 from models.user.user import User
 from models.user.user_password import UserPassword
-
-
-def get_user_by_email(db: Session, email: str) -> User:
-    return user_crud.get_user_by_email(db, email)
-
-
-def get_user_by_id(db: Session, user_id: UserId) -> User:
-    return user_crud.get_user_by_id(db, user_id)
 
 
 def create_user(db: Session, user_create: UserCreateRequest) -> User:
@@ -38,12 +29,12 @@ def create_user(db: Session, user_create: UserCreateRequest) -> User:
     return user_crud.create_user(db, user, hashed_password)
 
 
-def delete_user(db: Session, user_id: UserId) -> None:
-    exists_user: bool = user_crud.exists_active_user_by_id(db, user_id)
-    if not exists_user:
-        raise UserNotFoundError("ユーザーが見つかりませんでした")
+def get_user_by_id(db: Session, user_id: UserId) -> User:
+    return user_crud.get_user_by_id(db, user_id)
 
-    user_crud.delete_user(db, user_id)
+
+def get_user_by_email(db: Session, email: str) -> User:
+    return user_crud.get_user_by_email(db, email)
 
 
 def update_password(db: Session, user_id: UserId, user_password_update: UserPasswordUpdateRequest) -> None:
@@ -69,3 +60,11 @@ def update_user(db: Session, user_id: UserId, user_update: UserUpdateRequest) ->
         username=user_update.username,
     )
     user_crud.update_user(db, updated_user)
+
+
+def delete_user(db: Session, user_id: UserId) -> None:
+    exists_user: bool = user_crud.exists_active_user_by_id(db, user_id)
+    if not exists_user:
+        raise UserNotFoundError("ユーザーが見つかりませんでした")
+
+    user_crud.delete_user(db, user_id)
